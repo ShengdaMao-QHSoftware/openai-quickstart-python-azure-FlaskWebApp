@@ -25,5 +25,20 @@ def hello():
        return redirect(url_for('index'))
 
 
+@app.route("/chatGPT", methods=("GET", "POST"))
+def chatGPT():
+    if request.method == "POST":
+        animal = request.form["animal"]
+        response = openai.Completion.create(
+            model="text-davinci-003",
+            prompt=generate_prompt(animal),
+            temperature=0.6,
+        )
+        return redirect(url_for("chatGPT", result=response.choices[0].text))
+
+    result = request.args.get("result")
+    return render_template("chatGPT.html", result=result)
+
+
 if __name__ == '__main__':
    app.run()
